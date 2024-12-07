@@ -1,0 +1,26 @@
+# Use a slim version of OpenJDK
+FROM openjdk:21-jdk-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Copy your Spring Boot JAR file into the container
+COPY target/osint-0.0.1-SNAPSHOT.jar app.jar
+
+# Install Python3 and pip for theHarvester
+RUN apt-get update && apt-get install -y \
+    python \
+    python-pip && \
+    pip install -r https://raw.githubusercontent.com/laramies/theHarvester/master/requirements.txt
+
+# Add theHarvester binary
+RUN git clone https://github.com/laramies/theHarvester.git /opt/theHarvester
+
+# Expose port for Spring Boot
+EXPOSE 8080
+
+# Set environment variable to ensure UTF-8 output
+ENV LANG C.UTF-8
+
+# Command to run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
