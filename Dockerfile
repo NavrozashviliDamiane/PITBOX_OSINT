@@ -18,7 +18,6 @@ RUN apt-get update && apt-get install -y \
     git && \
     echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list && \
     apt-get update && \
-    apt-get install -y -t bullseye-backports python3.10 python3.10-distutils python3-pip && \
     apt-get clean
 
 # Verify Python installation
