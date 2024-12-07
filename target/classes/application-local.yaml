@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: osint
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: Osint
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
