@@ -4,38 +4,36 @@ WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
 
+FROM python:3.9-slim AS python-base
+
 FROM openjdk:17-slim
 
 WORKDIR /app
+
+# Copy Python from the Python base image
+COPY --from=python-base /usr/local /usr/local
+
+# Install necessary system dependencies
 RUN apt-get update && apt-get install -y \
-    wget \
-    gpg \
-    ca-certificates \
-    python3 \
-    python3-pip \
     git \
-    curl && \
-    apt-get clean
+    curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Download and install specific Python version if needed
-RUN wget https://www.python.org/ftp/python/3.9.16/Python-3.9.16.tgz \
-    && tar -xzf Python-3.9.16.tgz \
-    && cd Python-3.9.16 \
-    && ./configure --enable-optimizations \
-    && make -j $(nproc) \
-    && make altinstall \
-    && cd .. \
-    && rm -rf Python-3.9.16.tgz Python-3.9.16
-
-# Ensure pip is installed for the specific Python version
-RUN python3.9 -m ensurepip --upgrade
+# Ensure pip is up to date
+RUN python3 -m pip install --upgrade pip
 
 # Install theHarvester requirements
-# RUN python3.9 -m pip install -r https://raw.githubusercontent.com/laramies/theHarvester/master/requirements.txt
+RUN pip install -r https://raw.githubusercontent.com/laramies/theHarvester/master/requirements.txt
+
+# Clone theHarvester
 RUN git clone https://github.com/laramies/theHarvester.git /opt/theHarvester
 
+# Copy the built JAR from the builder stage
 COPY --from=builder /app/target/osint-0.0.1-SNAPSHOT.jar app.jar
 
+# Expose the application port
 EXPOSE 8080
 
+# Set the entrypoint to run the JAR
 ENTRYPOINT ["java", "-jar", "app.jar"]
