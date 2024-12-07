@@ -9,17 +9,14 @@ COPY target/osint-0.0.1-SNAPSHOT.jar app.jar
 
 # Install Python3 and pip for theHarvester
 RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
+    python \
+    python-pip \
     git && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     pip3 install -r https://raw.githubusercontent.com/laramies/theHarvester/master/requirements.txt
 
 # Add theHarvester binary
 RUN git clone https://github.com/laramies/theHarvester.git /opt/theHarvester
-
-# Set Python Path explicitly (optional but helpful)
-ENV PATH="/usr/bin:$PATH"
 
 # Expose port for Spring Boot
 EXPOSE 8080
