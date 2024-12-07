@@ -9,9 +9,11 @@ COPY target/osint-0.0.1-SNAPSHOT.jar app.jar
 
 # Install Python3 and pip for theHarvester
 RUN apt-get update && apt-get install -y \
-    python \
-    python-pip && \
-    pip install -r https://raw.githubusercontent.com/laramies/theHarvester/master/requirements.txt
+    python3 \
+    python3-pip \
+    git && \
+    ln -s /usr/bin/python3 /usr/bin/python && \
+    pip3 install -r https://raw.githubusercontent.com/laramies/theHarvester/master/requirements.txt
 
 # Add theHarvester binary
 RUN git clone https://github.com/laramies/theHarvester.git /opt/theHarvester

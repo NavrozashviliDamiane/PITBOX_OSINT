@@ -23,7 +23,7 @@ class ServiceHelper {
 
     fun executeScanCommand(scanRequest: ScanRequest): String {
         val command = listOf(
-            "python",
+            "python3",
             "theHarvester.py",
             "-d", scanRequest.domain,
             "-b", "all"
