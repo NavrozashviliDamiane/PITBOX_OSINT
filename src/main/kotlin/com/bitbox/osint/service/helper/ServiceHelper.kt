@@ -23,7 +23,7 @@ class ServiceHelper {
 
     fun executeScanCommand(scanRequest: ScanRequest): String {
         val command = listOf(
-            "python",  // Ensure this matches the Dockerfile setup
+            "python-env",  // Ensure this matches the Dockerfile setup
             "/opt/theHarvester/theHarvester.py", // Path to theHarvester
             "-d", scanRequest.domain,
             "-b", "all"
