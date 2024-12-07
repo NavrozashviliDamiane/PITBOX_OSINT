@@ -24,8 +24,6 @@ RUN apt-get update && apt-get install -y \
 
 
 
-# Install pip
-RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
 
 # Verify Python and pip installation
 RUN python3.10 --version
