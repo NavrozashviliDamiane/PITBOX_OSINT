@@ -31,7 +31,7 @@ RUN wget https://www.python.org/ftp/python/3.9.16/Python-3.9.16.tgz \
 RUN python3.9 -m ensurepip --upgrade
 
 # Install theHarvester requirements
-RUN python3.9 -m pip install -r https://raw.githubusercontent.com/laramies/theHarvester/master/requirements.txt
+# RUN python3.9 -m pip install -r https://raw.githubusercontent.com/laramies/theHarvester/master/requirements.txt
 RUN git clone https://github.com/laramies/theHarvester.git /opt/theHarvester
 
 COPY --from=builder /app/target/osint-0.0.1-SNAPSHOT.jar app.jar
