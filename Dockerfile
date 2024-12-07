@@ -5,20 +5,23 @@ WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
 
-# Stage 2: Runtime with Java and Latest Python
+# Stage 2: Runtime with Java and Python 3.10+
 FROM openjdk:17-slim
 
 WORKDIR /app
 
-# Install Python (latest) and additional tools
+# Install Python 3.10 from Debian backports
 RUN apt-get update && apt-get install -y \
-    software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa && \
+    wget \
+    curl \
+    gnupg \
+    git && \
+    echo "deb http://deb.debian.org/debian bullseye-backports main" >> /etc/apt/sources.list && \
     apt-get update && \
-    apt-get install -y python3.10 python3.10-distutils python3-pip git curl && \
+    apt-get install -y -t bullseye-backports python3.10 python3.10-distutils python3-pip && \
     apt-get clean
 
-# Verify Python version
+# Verify Python installation
 RUN python3.10 --version
 
 # Link python3.10 as the default Python
