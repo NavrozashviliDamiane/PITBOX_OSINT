@@ -18,6 +18,9 @@ RUN apt-get update && apt-get install -y \
 # Add theHarvester binary
 RUN git clone https://github.com/laramies/theHarvester.git /opt/theHarvester
 
+# Set Python Path explicitly (optional but helpful)
+ENV PATH="/usr/bin:$PATH"
+
 # Expose port for Spring Boot
 EXPOSE 8080
 

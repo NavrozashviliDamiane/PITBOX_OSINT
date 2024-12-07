@@ -23,29 +23,32 @@ class ServiceHelper {
 
     fun executeScanCommand(scanRequest: ScanRequest): String {
         val command = listOf(
-            "python3",
-            "theHarvester.py",
+            "python3",  // Ensure this matches the Dockerfile setup
+            "/opt/theHarvester/theHarvester.py", // Path to theHarvester
             "-d", scanRequest.domain,
             "-b", "all"
         )
+
         logger.info { "Executing command: ${command.joinToString(" ")}" }
 
-        val process = ProcessBuilder(command)
-            .redirectErrorStream(true)
-            .start()
+        return try {
+            val process = ProcessBuilder(command)
+                .redirectErrorStream(true)
+                .start()
 
-        val output = process.inputStream.bufferedReader().readText()
-        val exitCode = process.waitFor()
+            val output = process.inputStream.bufferedReader().readText()
+            val exitCode = process.waitFor()
 
-        if (exitCode != 0) {
-            logger.error { "Command failed with exit code $exitCode for domain: ${scanRequest.domain}" }
-            throw RuntimeException("Command execution failed for ${scanRequest.domain}")
+            if (exitCode != 0) {
+                logger.error { "Scan command failed with exit code $exitCode" }
+                throw RuntimeException("Command execution failed with exit code $exitCode: $output")
+            }
+
+            output
+        } catch (e: Exception) {
+            logger.error(e) { "Error executing scan command" }
+            throw RuntimeException("Error executing scan command: ${e.message}", e)
         }
-
-        logger.info { "Command executed successfully for domain: ${scanRequest.domain}" }
-        logger.debug { "Command output:\n$output" }
-
-        return output
     }
 
     fun parseScanResult(scanId: String, domain: String, output: String): ScanResult {
