@@ -8,23 +8,30 @@ FROM openjdk:17-slim
 
 WORKDIR /app
 RUN apt-get update && apt-get install -y \
-    software-properties-common \
-    && add-apt-repository ppa:deadsnakes/ppa -y \
-    && apt-get update \
-    && apt-get install -y \
-    python3.9 \
-    python3.9-pip \
-    python3.9-dev \
+    wget \
+    gpg \
+    ca-certificates \
+    python3 \
+    python3-pip \
     git \
-    curl \
-    && apt-get clean
+    curl && \
+    apt-get clean
 
-# Set Python 3.9 as default
-RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
-RUN update-alternatives --config python3
+# Download and install specific Python version if needed
+RUN wget https://www.python.org/ftp/python/3.9.16/Python-3.9.16.tgz \
+    && tar -xzf Python-3.9.16.tgz \
+    && cd Python-3.9.16 \
+    && ./configure --enable-optimizations \
+    && make -j $(nproc) \
+    && make altinstall \
+    && cd .. \
+    && rm -rf Python-3.9.16.tgz Python-3.9.16
 
-RUN pip3 install --upgrade pip
-RUN pip3 install -r https://raw.githubusercontent.com/laramies/theHarvester/master/requirements.txt
+# Ensure pip is installed for the specific Python version
+RUN python3.9 -m ensurepip --upgrade
+
+# Install theHarvester requirements
+RUN python3.9 -m pip install -r https://raw.githubusercontent.com/laramies/theHarvester/master/requirements.txt
 RUN git clone https://github.com/laramies/theHarvester.git /opt/theHarvester
 
 COPY --from=builder /app/target/osint-0.0.1-SNAPSHOT.jar app.jar
