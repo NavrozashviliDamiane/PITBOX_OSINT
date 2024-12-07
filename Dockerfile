@@ -8,12 +8,22 @@ FROM openjdk:17-slim
 
 WORKDIR /app
 RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
+    software-properties-common \
+    && add-apt-repository ppa:deadsnakes/ppa -y \
+    && apt-get update \
+    && apt-get install -y \
+    python3.9 \
+    python3.9-pip \
+    python3.9-dev \
     git \
-    curl && \
-    apt-get clean
+    curl \
+    && apt-get clean
 
+# Set Python 3.9 as default
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
+RUN update-alternatives --config python3
+
+RUN pip3 install --upgrade pip
 RUN pip3 install -r https://raw.githubusercontent.com/laramies/theHarvester/master/requirements.txt
 RUN git clone https://github.com/laramies/theHarvester.git /opt/theHarvester
 
