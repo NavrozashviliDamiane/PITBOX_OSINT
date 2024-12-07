@@ -8,11 +8,14 @@ FROM openjdk:17-slim
 
 WORKDIR /app
 RUN apt-get update && apt-get install -y \
-    python3 \
+    python3.10 \
+    python3.10-distutils \
     python3-pip \
     git \
     curl && \
     apt-get clean
+
+RUN ln -sf /usr/bin/python3.10 /usr/bin/python
 
 RUN pip install -r https://raw.githubusercontent.com/laramies/theHarvester/master/requirements.txt
 RUN git clone https://github.com/laramies/theHarvester.git /opt/theHarvester
