@@ -8,18 +8,18 @@ FROM openjdk:17-slim
 
 WORKDIR /app
 RUN apt-get update && apt-get install -y \
-    python3.10 \
-    python3-pip \
+    python3.12 \
+    python3.12-pip \
     git \
     curl && \
     apt-get clean
 
-RUN ln -sf /usr/bin/python3.10 /usr/bin/python3
+RUN ln -sf /usr/bin/python3.12 /usr/bin/python3
 RUN pip install -r https://raw.githubusercontent.com/laramies/theHarvester/master/requirements.txt
 RUN git clone https://github.com/laramies/theHarvester.git /opt/theHarvester
 
-RUN python3 --version
-RUN python3 /opt/theHarvester/theHarvester.py --help
+RUN python3.12 --version
+RUN python3.12 /opt/theHarvester/theHarvester.py --help
 
 COPY --from=builder /app/target/osint-0.0.1-SNAPSHOT.jar app.jar
 
