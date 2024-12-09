@@ -16,9 +16,6 @@ WORKDIR /app
 # Copy Java application from builder stage
 COPY --from=builder /app/target/osint-0.0.1-SNAPSHOT.jar app.jar
 
-# Copy theHarvester setup from python-env stage
-COPY --from=python-env /opt/theHarvester /opt/theHarvester
-
 # Expose the application's port
 EXPOSE 8080
 
