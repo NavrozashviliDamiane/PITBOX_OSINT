@@ -22,11 +22,14 @@ class ServiceHelper {
     }
 
     fun executeScanCommand(scanRequest: ScanRequest): String {
+        val supportedBackends = "bing,bingapi,dnsdumpster,crtsh,github"
+
         val command = listOf(
             "/opt/theHarvester/theHarvester.py", // Path to theHarvester
             "-d", scanRequest.domain,
-            "-b", "all"
+            "-b", supportedBackends
         )
+
 
         logger.info { "Executing command: ${command.joinToString(" ")}" }
 
