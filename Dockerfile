@@ -6,7 +6,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # Stage 2: Install Python and theHarvester
-FROM python:3.9-slim AS harvester
+FROM python:3.11-slim AS harvester
 
 WORKDIR /opt/theHarvester
 
@@ -14,7 +14,7 @@ WORKDIR /opt/theHarvester
 RUN apt-get update && \
     apt-get install -y git && \
     git clone https://github.com/laramies/theHarvester.git . && \
-    pip install -r requirements.txt && \
+    pip install --no-cache-dir -r requirements.txt && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Stage 3: Final runtime container with Java and Python
@@ -24,8 +24,8 @@ WORKDIR /app
 
 # Install Python and dependencies for theHarvester
 RUN apt-get update && \
-    apt-get install -y python3 python3-pip && \
-    pip3 install requests dnspython && \
+    apt-get install -y python3 python3-pip git && \
+    pip3 install --no-cache-dir requests dnspython netaddr && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy Java application from builder stage
