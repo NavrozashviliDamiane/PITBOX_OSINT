@@ -10,7 +10,7 @@ FROM python:3.11-slim AS harvester
 
 WORKDIR /opt/theHarvester
 
-# Install system dependencies and Python
+# Install system dependencies and Python tools
 RUN apt-get update && \
     apt-get install -y git curl && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -45,18 +45,8 @@ RUN pip install --no-cache-dir \
     playwright install && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Stage 3: Final runtime container with Java and Python
+# Stage 3: Final runtime container with Java and Python 3.11
 FROM python:3.11-slim
-
-RUN apt-get update && \
-    apt-get install -y python python-pip && \
-    pip install --no-cache-dir \
-        aiodns aiofiles aiohttp aiomultiprocess aiosqlite \
-        beautifulsoup4 censys certifi dnspython fastapi lxml \
-        netaddr ujson playwright PyYAML python-dateutil \
-        requests retrying shodan slowapi uvicorn uvloop \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-
 
 # Install OpenJDK
 RUN apt-get update && \
@@ -71,7 +61,7 @@ COPY --from=builder /app/target/osint-0.0.1-SNAPSHOT.jar app.jar
 # Copy theHarvester from the second stage
 COPY --from=harvester /opt/theHarvester /opt/theHarvester
 
-# Set theHarvester directory as an environment variable
+# Set theHarvester directory in PATH
 ENV PATH="/opt/theHarvester:$PATH"
 
 # Expose the application's port
