@@ -4,6 +4,7 @@ import com.bitbox.osint.domain.ScanResult
 import com.bitbox.osint.repository.ScanResultRepository
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
 class ScanResultRepositoryImpl(
@@ -14,7 +15,7 @@ class ScanResultRepositoryImpl(
         return mongoTemplate.save(scanResult)
     }
 
-    override fun findByScanId(scanId: String): ScanResult? {
+    override fun findByScanId(scanId: UUID): ScanResult? {
         return mongoTemplate.findById(scanId, ScanResult::class.java)
     }
 
