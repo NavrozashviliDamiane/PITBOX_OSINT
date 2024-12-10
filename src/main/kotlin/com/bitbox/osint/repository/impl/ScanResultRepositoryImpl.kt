@@ -3,6 +3,8 @@ package com.bitbox.osint.repository.impl
 import com.bitbox.osint.domain.ScanResult
 import com.bitbox.osint.repository.ScanResultRepository
 import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Repository
 import java.util.*
 
@@ -16,8 +18,10 @@ class ScanResultRepositoryImpl(
     }
 
     override fun findByScanId(scanId: UUID): ScanResult? {
-        return mongoTemplate.findById(scanId, ScanResult::class.java)
+        val query = Query(Criteria.where("scanId").`is`(scanId))
+        return mongoTemplate.findOne(query, ScanResult::class.java)
     }
+
 
     override fun deleteByScanId(scanId: String) {
         val result = mongoTemplate.findById(scanId, ScanResult::class.java)
