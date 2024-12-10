@@ -1,24 +1,20 @@
 # Stage 1: Build the Java application
 FROM maven:3.8.5-openjdk-17-slim AS builder
-
 WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
 
-# Stage 2: Install Python 3.11 and theHarvester
+# Stage 2: Install Python and theHarvester with all dependencies
 FROM python:3.11-slim AS harvester
-
 WORKDIR /opt/theHarvester
 
-# Install system dependencies and Python tools
 RUN apt-get update && \
     apt-get install -y git curl && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Clone theHarvester repository
 RUN git clone https://github.com/laramies/theHarvester.git .
 
-# Install dependencies with explicit versions
+# Install dependencies in the harvester stage
 RUN pip install --no-cache-dir \
     aiodns==3.2.0 \
     aiofiles==24.1.0 \
@@ -45,27 +41,29 @@ RUN pip install --no-cache-dir \
     playwright install && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Stage 3: Final runtime container with Java and Python 3.11
-FROM python:3.11-slim
+# Output a requirements file for final stage if desired
+RUN pip freeze > /tmp/requirements.txt
 
-# Install OpenJDK
+# Stage 3: Final runtime container
+FROM python:3.11-slim
+WORKDIR /app
+
+# Install Java
 RUN apt-get update && \
     apt-get install -y openjdk-17-jdk && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
-# Copy Java application from builder stage
+# Copy Java application
 COPY --from=builder /app/target/osint-0.0.1-SNAPSHOT.jar app.jar
 
-# Copy theHarvester from the second stage
+# Copy theHarvester source
 COPY --from=harvester /opt/theHarvester /opt/theHarvester
 
-# Set theHarvester directory in PATH
-ENV PATH="/opt/theHarvester:$PATH"
+# Re-install dependencies in the final stage (using the requirements from the previous stage)
+COPY --from=harvester /tmp/requirements.txt /requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt
 
-# Expose the application's port
+ENV PATH="/opt/theHarvester:$PATH"
 EXPOSE 8080
 
-# Default entry point for the Java application
 ENTRYPOINT ["java", "-jar", "app.jar"]
