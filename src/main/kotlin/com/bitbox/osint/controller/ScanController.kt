@@ -21,20 +21,20 @@ class ScanController(
 ) {
 
     @PostMapping
-    fun initiateScan(@RequestBody scanRequest: ScanRequest): ResponseEntity<ScanResponse> {
+    fun initiateScan(@RequestBody scanRequest: ScanRequest): ResponseEntity<String> {
         logger.info { "Received request to initiate scan for domain: ${scanRequest.domain} using tool: ${scanRequest.tool}" }
         return try {
             domainValidation.validate(scanRequest.domain)
 
             val scanResponse = scanService.initiateScan(scanRequest)
             logger.info { "Successfully initiated scan for domain: ${scanRequest.domain}" }
-            ResponseEntity.ok(scanResponse)
+            ResponseEntity.ok("Scan successfully initiated for domain: ${scanRequest.domain}")
         } catch (e: IllegalArgumentException) {
             logger.error { "Bad request for scan: ${e.message}" }
-            ResponseEntity.badRequest().body(null)
+            ResponseEntity.badRequest().body(e.message)
         } catch (e: Exception) {
             logger.error(e) { "Error initiating scan: ${e.message}" }
-            ResponseEntity.internalServerError().body(null)
+            ResponseEntity.internalServerError().body("An unexpected error occurred: ${e.message}")
         }
     }
 
