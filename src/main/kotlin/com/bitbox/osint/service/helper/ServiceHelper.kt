@@ -23,7 +23,7 @@ class ServiceHelper {
 
     fun executeScanCommand(scanRequest: ScanRequest): String {
         val command = listOf(
-            "/opt/theHarvester/theHarvester.py", // Path to theHarvester
+            "/opt/theHarvester/theHarvester.py",
             "-d", scanRequest.domain,
             "-b", "all"
         )

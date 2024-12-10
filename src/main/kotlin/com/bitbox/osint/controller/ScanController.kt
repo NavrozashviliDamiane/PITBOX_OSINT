@@ -3,6 +3,7 @@ package com.bitbox.osint.controller
 
 import com.bitbox.osint.dto.ScanRequest
 import com.bitbox.osint.dto.ScanResponse
+import com.bitbox.osint.validation.DomainValidation
 import com.ptbox.osint.service.ScanService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -15,13 +16,16 @@ private val logger = KotlinLogging.logger {}
 @RestController
 @RequestMapping("/api/scans")
 class ScanController(
-    private val scanService: ScanService
+    private val scanService: ScanService,
+    private val domainValidation: DomainValidation
 ) {
 
     @PostMapping
     fun initiateScan(@RequestBody scanRequest: ScanRequest): ResponseEntity<ScanResponse> {
         logger.info { "Received request to initiate scan for domain: ${scanRequest.domain} using tool: ${scanRequest.tool}" }
         return try {
+            domainValidation.validate(scanRequest.domain)
+
             val scanResponse = scanService.initiateScan(scanRequest)
             logger.info { "Successfully initiated scan for domain: ${scanRequest.domain}" }
             ResponseEntity.ok(scanResponse)
@@ -46,33 +50,4 @@ class ScanController(
             ResponseEntity.internalServerError().body(emptyList())
         }
     }
-
-    @PostMapping("/amass")
-    fun initiateAmassScan(@RequestBody scanRequest: ScanRequest): Any {
-        logger.info { "Received request to initiate Amass scan for domain: ${scanRequest.domain}" }
-        return try {
-            val command = listOf(
-                "docker", "exec", "amass-container", // Ensure the container name is correct
-                "amass", "enum", "-d", scanRequest.domain
-            )
-
-            val process = ProcessBuilder(command)
-                .redirectErrorStream(true)
-                .start()
-
-            val output = BufferedReader(InputStreamReader(process.inputStream)).use { it.readText() }
-            process.waitFor()
-
-            if (process.exitValue() == 0) {
-                logger.info { "Amass scan completed for domain: ${scanRequest.domain}" }
-                ResponseEntity.ok(mapOf("status" to "completed", "domain" to scanRequest.domain, "output" to output))
-            } else {
-                logger.error { "Amass scan failed for domain: ${scanRequest.domain}" }
-                ResponseEntity.internalServerError().body(
-                    mapOf("status" to "failed", "domain" to scanRequest.domain, "error" to "Amass scan failed")
-                )
-            }
-        } catch (e: Exception) {
-            return  e;
-    }}
 }

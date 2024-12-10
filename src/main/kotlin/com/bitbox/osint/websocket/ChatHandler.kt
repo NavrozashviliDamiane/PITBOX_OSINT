@@ -14,10 +14,10 @@ private val logger = KotlinLogging.logger {}
 @Component
 class ChatHandler(
     private val harvesterWebSocketClient: HarvesterWebSocketClient,
-    private val objectMapper: ObjectMapper // Inject ObjectMapper for better testability
+    private val objectMapper: ObjectMapper
 ) : TextWebSocketHandler() {
 
-    private val sessions = mutableSetOf<WebSocketSession>() // Use a Set to avoid duplicate sessions
+    private val sessions = mutableSetOf<WebSocketSession>()
 
     override fun afterConnectionEstablished(session: WebSocketSession) {
         sessions.add(session)
@@ -31,8 +31,6 @@ class ChatHandler(
             val domain = payload["domain"] as? String ?: throw IllegalArgumentException("Missing 'domain'")
             val tool = payload["tool"] as? String ?: "all"
 
-            // Forward scan request to Flask/Harvester
-//            harvesterWebSocketClient.startScan(domain, tool)
             session.sendMessage(TextMessage("Scan request forwarded successfully"))
         } catch (e: Exception) {
             logger.error { "Error handling message: ${e.message}" }

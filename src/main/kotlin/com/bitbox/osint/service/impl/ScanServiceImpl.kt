@@ -5,7 +5,6 @@ import com.bitbox.osint.dto.ScanRequest
 import com.bitbox.osint.dto.ScanResponse
 import com.bitbox.osint.repository.ScanRepository
 import com.bitbox.osint.repository.ScanResultRepository
-import com.bitbox.osint.service.WebSocketService
 import com.bitbox.osint.service.helper.ServiceHelper
 import com.bitbox.osint.service.mapper.MapperService
 import com.bitbox.osint.websocket.ChatHandler
