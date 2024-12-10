@@ -18,7 +18,7 @@ RUN apt-get update && \
 # Clone theHarvester repository
 RUN git clone https://github.com/laramies/theHarvester.git .
 
-# Install required Python dependencies
+# Install all dependencies explicitly
 RUN pip install --no-cache-dir \
     aiodns==3.2.0 \
     aiofiles==24.1.0 \
@@ -56,7 +56,7 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -y python3 python3-pip && \
     pip3 install --no-cache-dir \
-        requests dnspython netaddr ujson && \
+        requests dnspython netaddr ujson aiomultiprocess && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy Java application from builder stage
