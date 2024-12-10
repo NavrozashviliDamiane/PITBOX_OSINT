@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 @Service
 class HarvesterWebSocketClient(
     private val scanResultRepository: ScanResultRepository,
-    private val objectMapper: ObjectMapper // Inject ObjectMapper for better testability
+    private val objectMapper: ObjectMapper
 ) {
 
     private val logger = LoggerFactory.getLogger(HarvesterWebSocketClient::class.java)

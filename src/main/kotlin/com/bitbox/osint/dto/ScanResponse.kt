@@ -1,6 +1,4 @@
 package com.bitbox.osint.dto
-
-
 import java.time.LocalDateTime
 
 data class ScanResponse(
@@ -9,6 +7,5 @@ data class ScanResponse(
     val tool: String,
     val status: String,
     val startTime: LocalDateTime,
-    val endTime: LocalDateTime?,
-    val error: String
+    val endTime: LocalDateTime?
 )
