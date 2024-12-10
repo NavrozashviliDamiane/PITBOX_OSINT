@@ -56,7 +56,7 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -y python3 python3-pip && \
     pip3 install --no-cache-dir \
-        requests dnspython netaddr ujson aiomultiprocess aiosqlite beautifulsoup4 censys  certifi dnspython  fastapi lxml netaddr ujson  playwright PyYAML  python-dateutil requests retrying shodan slowapi uvicorn uvloop  && \
+        requests dnspython netaddr ujson aiohttp aiomultiprocess aiosqlite beautifulsoup4 censys  certifi dnspython  fastapi lxml netaddr ujson  playwright PyYAML  python-dateutil requests retrying shodan slowapi uvicorn uvloop  && \
                                                                                                                                                                                                                          apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
