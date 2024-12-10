@@ -49,8 +49,8 @@ RUN pip install --no-cache-dir \
 FROM python:3.11-slim
 
 RUN apt-get update && \
-    apt-get install -y harvester harvester-pip && \
-    pip3 install --no-cache-dir \
+    apt-get install -y python python-pip && \
+    pip install --no-cache-dir \
         aiodns aiofiles aiohttp aiomultiprocess aiosqlite \
         beautifulsoup4 censys certifi dnspython fastapi lxml \
         netaddr ujson playwright PyYAML python-dateutil \
